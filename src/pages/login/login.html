@@ -1,0 +1,26 @@
+<ion-header>
+</ion-header>
+
+<ion-content padding>
+  <div>
+    <h3 align="center">Reminder Mind</h3>
+    <ion-item>
+      <img class="logo" src="./assets/imgs/logo.png" alt="imagem">
+    </ion-item>
+  </div>
+  <ion-item>
+    <ion-label floating>Login</ion-label>
+    <ion-input type="email" [(ngModel)]="login.user"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label floating>Password</ion-label>
+    <ion-input type="password" [(ngModel)]="login.password"></ion-input>
+  </ion-item>
+  <div style="margin: 10%">
+    <button ion-button full round (click)="signIn()" >
+      Sign-In
+    </button>
+  </div>
+
+  <h6 align="center">Não possui conta ? <a (click)="register()">CRIAR AGORA</a></h6>
+</ion-content>

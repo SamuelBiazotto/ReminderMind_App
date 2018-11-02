@@ -1,1 +1,22 @@
-<ion-nav [root]="rootPage"></ion-nav>
+<ion-menu [content]="content">
+
+  <ion-content>
+    <ion-item style="background-color: #f4f4f4; text-align: -webkit-center" menuClose >
+      <ion-avatar class="avatar">
+        <h5 align="center">Reminder Mind</h5>
+        <img style="width: 70%; height: 50%;" class="myavt" src="./assets/imgs/logo.png">
+      </ion-avatar>
+      <h2 padding="true" text-center="true" *ngIf="showInfo">{{currentUser.username}}</h2>
+    </ion-item>
+
+    <ion-list>
+      <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">
+        <ion-icon color="primary" [name]="p.icon" item-start></ion-icon>
+        {{p.title}}
+      </button>
+    </ion-list>
+  </ion-content>
+
+</ion-menu>
+
+<ion-nav [root]="rootPage" #content swipeBackEnabled="false"></ion-nav>
