@@ -20,7 +20,7 @@ export class NotificationProvider {
           priority: 1,
           sound: 'file://sound.mp3', /*isAndroid? 'file://sound.mp3': 'file://beep.caf',*/
           icon: 'file://assets/imgs/logo.png',
-          smallIcon: 'file://assets/imgs/logo',
+          smallIcon: 'file://assets/imgs/logo_transparent',
           // data: {secret: 'key'}
         });
       }

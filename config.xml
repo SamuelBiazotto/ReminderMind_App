@@ -88,5 +88,6 @@
         <variable name="APPCOMPAT_VERSION" value="27.1.1" />
     </plugin>
     <plugin name="cordova-plugin-local-notification" spec="^0.9.0-beta.2" />
+    <plugin name="cordova-plugin-speechrecognition" spec="^1.2.0" />
     <engine name="android" spec="7.0.0" />
 </widget>

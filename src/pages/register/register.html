@@ -1,18 +1,27 @@
-<!--
-  Generated template for the RegisterPage page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
-
   <ion-navbar>
-    <ion-title>register</ion-title>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Cadastro</ion-title>
   </ion-navbar>
-
 </ion-header>
 
-
 <ion-content padding>
-
+  <ion-item>
+    <ion-label floating>Nome:</ion-label>
+    <ion-input [(ngModel)]="user.username"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label floating>E-mail:</ion-label>
+    <ion-input type="email" [(ngModel)]="user.email"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label floating>Senha:</ion-label>
+    <ion-input type="password" [(ngModel)]="user.password"></ion-input>
+  </ion-item>
 </ion-content>
+
+<ion-footer style="text-align: -webkit-center;">
+  <button style="width: 80%" ion-button full round (click)="record()"> Cadastrar</button>
+</ion-footer>

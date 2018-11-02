@@ -35,6 +35,8 @@ import {RegisterPage} from "../pages/register/register";
 import {ListPage} from "../pages/list/list";
 import {NewListPage} from "../pages/new-list/new-list";
 import { ConnectivityProvider } from '../providers/connectivity/connectivity';
+import {SpeechRecognition} from "@ionic-native/speech-recognition";
+import { SpeechProvider } from '../providers/speech/speech';
 
 
 @NgModule({
@@ -42,13 +44,13 @@ import { ConnectivityProvider } from '../providers/connectivity/connectivity';
     MyApp,
     // AboutPage,
     // ContactPage,
+    // TabsPage
     HomePage,
     LoginPage,
     MapPage,
     RegisterPage,
     ListPage,
     NewListPage,
-    // TabsPage
   ],
   imports: [
     BrowserModule,
@@ -60,13 +62,13 @@ import { ConnectivityProvider } from '../providers/connectivity/connectivity';
     MyApp,
     // AboutPage,
     // ContactPage,
+    // TabsPage
     HomePage,
     LoginPage,
     MapPage,
     RegisterPage,
     ListPage,
     NewListPage,
-    // TabsPage
   ],
   providers: [
     StatusBar,
@@ -76,7 +78,9 @@ import { ConnectivityProvider } from '../providers/connectivity/connectivity';
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     NotificationProvider,
     BackgroundGeolocationProvider,
-    ConnectivityProvider
+    ConnectivityProvider,
+    SpeechRecognition,
+    SpeechProvider
   ]
 })
 export class AppModule {}

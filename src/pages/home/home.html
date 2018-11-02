@@ -1,17 +1,31 @@
 <ion-header>
   <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
     <ion-title>Home</ion-title>
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  <h2>Welcome to Ionic!</h2>
-  <p>
-    This starter project comes with simple tabs-based layout for apps
-    that are going to primarily use a Tabbed UI.
-  </p>
-  <p>
-    Take a look at the <code>src/pages/</code> directory to add or change tabs,
-    update any existing page or create new pages.
-  </p>
+<ion-content padding style="background-color: #dedede;">
+  <img src="./assets/imgs/logo.png" width="24%" height="15%">
+  <h3 style="float: right; margin-top: 11%;"> Reminder Mind</h3><br><br>
+  <h2 style="text-align: center"> BEM VINDO ! </h2><br>
+  <!--<h5 style="text-align: center;">{{currentUser.username}}</h5><br><br>-->
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-card style="padding: 25%; background-color: #2283b5; color: white; border-radius: 10%;" (click)="sendMap()">
+          <ion-icon name="map"></ion-icon>
+          Mapa
+        </ion-card>
+      </ion-col>
+      <ion-col>
+        <ion-card style="padding: 25%; background-color: #2283b5; color: white; border-radius: 10%;" (click)="sendList()">
+          <ion-icon name="list"></ion-icon>
+          Listas
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
