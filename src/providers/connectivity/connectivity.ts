@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 export class ConnectivityProvider {
 
   constructor(public http: HttpClient) {
-    console.log('Hello ConnectivityProvider Provider');
+    // console.log('Hello ConnectivityProvider Provider');
   }
 
   Post(path, data, headers): Promise<any> {
@@ -32,8 +32,15 @@ export class ConnectivityProvider {
       .catch(this.handleError)
   }
 
-  Get(path, headers): Promise<any> {
+  Get(path, headers?): Promise<any> {
     return this.http.get(path, {headers: headers, responseType: 'json'})
+      .toPromise()
+      .then(this.extractData)
+      .catch(this.handleError)
+  }
+
+  getGoolge(path, params?): Promise<any> {
+    return this.http.get(path, {params: params, responseType: 'json'})
       .toPromise()
       .then(this.extractData)
       .catch(this.handleError)

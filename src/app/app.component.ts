@@ -1,14 +1,15 @@
 import {Component, ViewChild} from '@angular/core';
 import {AlertController, Events, Nav, Platform} from 'ionic-angular';
-import { StatusBar } from '@ionic-native/status-bar';
-import { SplashScreen } from '@ionic-native/splash-screen';
-
+import {StatusBar} from '@ionic-native/status-bar';
+import {SplashScreen} from '@ionic-native/splash-screen';
 // import { TabsPage } from '../pages/tabs/tabs';
 import {HomePage} from "../pages/home/home";
 import {BackgroundGeolocationProvider} from "../providers/background-geolocation/background-geolocation";
 import {LoginPage} from "../pages/login/login";
 import {MapPage} from "../pages/map/map";
 import {ListPage} from "../pages/list/list";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
+import {environment} from "../environment";
 
 @Component({
   templateUrl: 'app.html'
@@ -21,10 +22,15 @@ export class MyApp {
   currentUser:any;
   showInfo = false;
   logedIn:any;
+  headersOptions = new HttpHeaders()
+    .set('Access-Control-Allow-Origin', 'localhost:8080')
+    .append('Access-Control-Allow-Headers', 'Cache-Control, Pragma, Origin, Content-Type, X-Requested-With')
+    .append('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS')
+    .append('Access-Control-Allow-Credentials', 'true');
   pages: Array<{title: string, icon: string, component: any}>;
 
   constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public alertCtrl: AlertController,
-              public event: Events, public backgroundGeolocation: BackgroundGeolocationProvider) {
+              public event: Events, public backgroundGeolocation: BackgroundGeolocationProvider,public http: HttpClient) {
 
     this.pages = [
       { title: 'Home',     icon: 'home',  component: HomePage },

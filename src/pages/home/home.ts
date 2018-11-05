@@ -29,7 +29,6 @@ import {SpeechProvider} from "../../providers/speech/speech";
 })
 export class HomePage implements OnInit{
 
-  speechList: Array<string> = [];
   currentUser:any;
 
   constructor(public navCtrl: NavController, public backgroundGeolocation: BackgroundGeolocationProvider, public speech: SpeechRecognition,
@@ -37,7 +36,8 @@ export class HomePage implements OnInit{
 
     this.backgroundGeolocation.start();
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    console.log(this.currentUser);
+    // console.log(this.currentUser);
+    console.log(this.backgroundGeolocation.getGeolocation());
   }
 
   ngOnInit(){

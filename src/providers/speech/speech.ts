@@ -1,5 +1,4 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {SpeechRecognition} from "@ionic-native/speech-recognition";
 
 /*
@@ -12,7 +11,7 @@ import {SpeechRecognition} from "@ionic-native/speech-recognition";
 export class SpeechProvider {
 
   constructor(public speech: SpeechRecognition) {
-    console.log('Hello SpeechProvider Provider');
+    // console.log('Hello SpeechProvider Provider');
   }
 
   async getSupportedLanguages(): Promise<Array<string>>{

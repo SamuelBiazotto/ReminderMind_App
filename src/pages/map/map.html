@@ -5,14 +5,34 @@
   Ionic pages and navigation.
 -->
 <ion-header>
-
   <ion-navbar>
-    <ion-title>map</ion-title>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Mapa</ion-title>
   </ion-navbar>
-
+  <ion-toolbar style="position: sticky;" no-border-top>
+    <ion-segment [(ngModel)]="toolbar" (ionChange)="lockScroll()">
+      <ion-segment-button value="map">
+        <ion-icon name="map" item-start></ion-icon>
+      </ion-segment-button>
+      <ion-segment-button value="list">
+        <ion-icon name="list-box" item-start></ion-icon>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
 </ion-header>
 
 
 <ion-content padding>
 
+  <div style="width: 100%; height: 100%" [hidden]="toolbar !== 'map'" #map id="map"></div>
+
+  <div [hidden]="toolbar !== 'list'">
+    <ion-list>
+      <ion-item *ngFor="let item of localesList" (click)="launch(item)">
+        <h2>{{item.name}}</h2>
+      </ion-item>
+    </ion-list>
+  </div>
 </ion-content>

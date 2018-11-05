@@ -6,7 +6,7 @@ import {LocalNotifications} from "@ionic-native/local-notifications";
 export class NotificationProvider {
 
   constructor(public http: HttpClient, public localNotifications: LocalNotifications) {
-    console.log('Hello NotificationProvider Provider');
+    // console.log('Hello NotificationProvider Provider');
   }
 
   notification(message) {
