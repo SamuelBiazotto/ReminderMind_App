@@ -45,18 +45,24 @@ export class BackgroundGeolocationProvider {
         this.addGeofence(response.coords.latitude, response.coords.longitude);
         this.configureBackgroundGeolocation.bind(this);
 
-        let googelPath = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${response.coords.latitude},${response.coords.longitude}&radius=200&type=$pet_store&keyword=$pet_store&key=AIzaSyBbjVONh2KXV3hWmIV3JkOzb70f6XlmI_k`;
+        let googelPath = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${response.coords.latitude},${response.coords.longitude}&radius=150&type=school&keyword=school&key=AIzaSyBbjVONh2KXV3hWmIV3JkOzb70f6XlmI_k`;
         let param = new HttpParams().set('teste', googelPath);
         // console.log("PATH ****: ", googelPath);
         this.connectivity.getGoolge(environment.serverPath+'users/google_request', param)
           .then(response => {
+            if(response.results.length > 0){
+              response.results.forEach(local => {
+                if(local.hasOwnProperty('rating')){
+                  this.notify.notification(JSON.parse(localStorage.getItem('currentUser')).username + ", encontramos algo próximo a você");
+                  return;
+                }
+              })
+            }
             // console.log("GOOGLE_PATH: ",response);
-            this.notify.notification("Encontramos algo próximo a você");
           })
           .catch(err => {
             console.log("error: ", err);
           });
-
       });
     });
   }
@@ -110,7 +116,7 @@ export class BackgroundGeolocationProvider {
     BackgroundGeolocation.onHttp(this.onHttp.bind(this));
     BackgroundGeolocation.onEnabledChange(this.onEnabledChange.bind(this));
     BackgroundGeolocation.onConnectivityChange(this.onConnectivityChange.bind(this));
-    // BackgroundGeolocation.onHeartbeat(this.onHeartBeat.bind(this));
+    BackgroundGeolocation.onHeartbeat(this.onHeartBeat.bind(this));
 
     BackgroundGeolocation.ready({
       debug: true,
@@ -119,7 +125,7 @@ export class BackgroundGeolocationProvider {
       distanceFilter: 10,
       stopOnTerminate: false,
       startOnBoot: true,
-      // heartbeatInterval: 30,
+      heartbeatInterval: 60,
       // url: 'http://your.server.com/locations',
       autoSync: true,
       // params: {
@@ -183,8 +189,8 @@ export class BackgroundGeolocationProvider {
     let geolocation: any;
     console.log('[geofence] -', event.action, event.identifier, event.location);
     // this.notify.notification('GEOFENCE ');
-    if(event.action == "LEAVE"){
-      this.notify.notification('Leave location');
+    if(event.action == "EXIT"){
+      this.notify.notification('EXIT');
     }
     if(event.action == 'EXIT'){
       this.getGeolocation().subscribe( response => {
@@ -204,13 +210,19 @@ export class BackgroundGeolocationProvider {
             this.newArray = new Set(this.newArray);
             setTimeout( () => {
               this.newArray.forEach(item => {
-                let googelPath = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${geolocation.coords.latitude},${geolocation.coords.longitude}&radius=200&type=${item}&keyword=${item}&key=AIzaSyBbjVONh2KXV3hWmIV3JkOzb70f6XlmI_k`;
+                let googelPath = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${geolocation.coords.latitude},${geolocation.coords.longitude}&radius=150&type=${item}&keyword=${item}&key=AIzaSyBbjVONh2KXV3hWmIV3JkOzb70f6XlmI_k`;
                 let param = new HttpParams().set('teste', googelPath);
                 // console.log("PATH ****: ", googelPath);
                 this.connectivity.getGoolge(environment.serverPath+'users/google_request', param)
                   .then(response => {
-                    // console.log("GOOGLE_PATH: ",response);
-                    this.notify.notification("Encontramos algo próximo a você");
+                    if(response.results.length > 0){
+                      response.results.forEach(local => {
+                        if(local.hasOwnProperty('rating')){
+                          this.notify.notification(JSON.parse(localStorage.getItem('currentUser')).username + "encontramos algo próximo a você");
+                          return;
+                        }
+                      })
+                    }
                   })
                   .catch(err => {
                     console.log("error: ", err);
