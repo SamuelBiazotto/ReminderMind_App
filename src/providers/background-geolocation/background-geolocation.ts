@@ -51,7 +51,7 @@ export class BackgroundGeolocationProvider {
         this.addGeofence(response.coords.latitude, response.coords.longitude);
         this.configureBackgroundGeolocation.bind(this);
 
-        // let googelPath = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${response.coords.latitude},${response.coords.longitude}&radius=150&type=school&keyword=school&key=AIzaSyBbjVONh2KXV3hWmIV3JkOzb70f6XlmI_k`;
+        // let googelPath = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${response.coords.latitude},${response.coords.longitude}&radius=150&type=school&keyword=school&key=**************`;
         // let param = new HttpParams().set('teste', googelPath);
         // // console.log("PATH ****: ", googelPath);
         // this.connectivity.getGoolge(environment.serverPath+'users/google_request', param)
@@ -312,7 +312,7 @@ export class BackgroundGeolocationProvider {
             this.newArray = new Set(this.newArray);
             setTimeout( () => {
               this.newArray.forEach(item => {
-                let googelPath = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${geolocation.coords.latitude},${geolocation.coords.longitude}&radius=150&type=${item}&keyword=${item}&key=AIzaSyBbjVONh2KXV3hWmIV3JkOzb70f6XlmI_k`;
+                let googelPath = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${geolocation.coords.latitude},${geolocation.coords.longitude}&radius=150&type=${item}&keyword=${item}&key=***************`;
                 let param = new HttpParams().set('teste', googelPath);
                 // console.log("PATH ****: ", googelPath);
                 this.connectivity.getGoolge(environment.serverPath+'users/google_request', param)
