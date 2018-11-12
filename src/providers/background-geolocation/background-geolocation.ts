@@ -30,6 +30,10 @@ export class BackgroundGeolocationProvider {
   list: any;
   newArray: any;
   headersOptions = new HttpHeaders().set('authorization', 'teste');
+  currentLatitude:any;
+  currentLongitude: any;
+  newLongitude: any;
+  newLatitude: any;
   constructor(public http: HttpClient, private notify: NotificationProvider, public platform: Platform, public connectivity: ConnectivityProvider,
   ) {
     // console.log('Hello BackgroundGeolocationProvider Provider');
@@ -42,27 +46,29 @@ export class BackgroundGeolocationProvider {
       console.log(this.configureBackgroundGeolocation());
       // console.log(this);
       this.getGeolocation().subscribe( response => {
+        this.currentLatitude = response.coords.latitude;
+        this.currentLongitude = response.coords.longitude;
         this.addGeofence(response.coords.latitude, response.coords.longitude);
         this.configureBackgroundGeolocation.bind(this);
 
-        let googelPath = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${response.coords.latitude},${response.coords.longitude}&radius=150&type=school&keyword=school&key=AIzaSyBbjVONh2KXV3hWmIV3JkOzb70f6XlmI_k`;
-        let param = new HttpParams().set('teste', googelPath);
-        // console.log("PATH ****: ", googelPath);
-        this.connectivity.getGoolge(environment.serverPath+'users/google_request', param)
-          .then(response => {
-            if(response.results.length > 0){
-              response.results.forEach(local => {
-                if(local.hasOwnProperty('rating')){
-                  this.notify.notification(JSON.parse(localStorage.getItem('currentUser')).username + ", encontramos algo próximo a você");
-                  return;
-                }
-              })
-            }
-            // console.log("GOOGLE_PATH: ",response);
-          })
-          .catch(err => {
-            console.log("error: ", err);
-          });
+        // let googelPath = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${response.coords.latitude},${response.coords.longitude}&radius=150&type=school&keyword=school&key=AIzaSyBbjVONh2KXV3hWmIV3JkOzb70f6XlmI_k`;
+        // let param = new HttpParams().set('teste', googelPath);
+        // // console.log("PATH ****: ", googelPath);
+        // this.connectivity.getGoolge(environment.serverPath+'users/google_request', param)
+        //   .then(response => {
+        //     if(response.results.length > 0){
+        //       response.results.forEach(local => {
+        //         if(local.hasOwnProperty('rating')){
+        //           this.notify.notification(JSON.parse(localStorage.getItem('currentUser')).username + ", encontramos algo próximo a você");
+        //           return;
+        //         }
+        //       })
+        //     }
+        //     // console.log("GOOGLE_PATH: ",response);
+        //   })
+        //   .catch(err => {
+        //     console.log("error: ", err);
+        //   });
       });
     });
   }
@@ -116,7 +122,7 @@ export class BackgroundGeolocationProvider {
     BackgroundGeolocation.onHttp(this.onHttp.bind(this));
     BackgroundGeolocation.onEnabledChange(this.onEnabledChange.bind(this));
     BackgroundGeolocation.onConnectivityChange(this.onConnectivityChange.bind(this));
-    BackgroundGeolocation.onHeartbeat(this.onHeartBeat.bind(this));
+    // BackgroundGeolocation.onHeartbeat(this.onHeartBeat.bind(this));
 
     BackgroundGeolocation.ready({
       debug: true,
@@ -125,7 +131,7 @@ export class BackgroundGeolocationProvider {
       distanceFilter: 10,
       stopOnTerminate: false,
       startOnBoot: true,
-      heartbeatInterval: 60,
+      // heartbeatInterval: 60,
       // url: 'http://your.server.com/locations',
       autoSync: true,
       // params: {
@@ -154,9 +160,9 @@ export class BackgroundGeolocationProvider {
   }
 
 
-  onHeartBeat(event: HeartbeatEvent) {
-    console.log('[heartBeat] - ', event)
-  }
+  // onHeartBeat(event: HeartbeatEvent) {
+  //   console.log('[heartBeat] - ', event)
+  // }
 
   //pega se se locomoveu
   onLocation(location:Location) {
@@ -173,9 +179,108 @@ export class BackgroundGeolocationProvider {
 
   //pega mudança de atividades no celular e se o user esta apé ou de carro
   onActivityChange(event:MotionActivityEvent) {
-    console.log('[activitychange] -', event.activity, event.confidence);
+    // console.log('[activitychange] -', event.activity, event.confidence);
     // this.notification('ACTIVYTICHANGE');
-
+    if(event.activity == 'on_foot'){
+      this.getGeolocation().subscribe(newlocation => {
+        this.newLongitude = newlocation.coords.longitude;
+        this.newLatitude = newlocation.coords.latitude;
+        this.getDistanceFromLatLonInKm(
+          {lat: this.currentLatitude, lng: this.currentLongitude},
+          {lat: this.newLatitude, lng: this.newLongitude}
+        ).subscribe( distance => {
+            console.log("DISTANCE  ON_FOOT: ", distance);
+            if(distance >= 500){
+              this.getGeolocation().subscribe( geolocation => {
+                console.log("GEOLOCATION 500: ", geolocation);
+                this.currentLatitude = geolocation.coords.latitude;
+                this.currentLongitude = geolocation.coords.longitude;
+                this.connectivity.Get(environment.serverPath + 'todo_list/to_use/' + JSON.parse(localStorage.getItem('currentUser')).id, this.headersOptions).then( response => {
+                  this.list = response;
+                  this.list.forEach(item => {
+                    this.newArray += item.kind;
+                  });
+                  if(this.newArray.length > 0){
+                    this.newArray = this.newArray.split(/(\s+)/).filter(function (e) { return e.trim().length > 0; });
+                    this.newArray = new Set(this.newArray);
+                    setTimeout( () => {
+                      this.newArray.forEach(item => {
+                        let googelPath = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${geolocation.coords.latitude},${geolocation.coords.longitude}&radius=150&type=${item}&keyword=${item}&key=AIzaSyBbjVONh2KXV3hWmIV3JkOzb70f6XlmI_k`;
+                        let param = new HttpParams().set('teste', googelPath);
+                        this.connectivity.getGoolge(environment.serverPath+'users/google_request', param)
+                          .then(response => {
+                            if(response.results.length > 0){
+                              response.results.forEach(local => {
+                                if(local.hasOwnProperty('rating')){
+                                  this.notify.notification(JSON.parse(localStorage.getItem('currentUser')).username + "encontramos algo próximo a você");
+                                  return;
+                                }
+                              })
+                            }
+                          })
+                          .catch(err => {
+                            console.log("error: ", err);
+                          });
+                      });
+                    });
+                  }
+                });
+              }, error => console.log('error: ', error))
+            }
+          },
+          err => {
+            console.log("error:", err);
+          });
+      });
+    }else if(event.activity == 'in_vehicle'){
+      this.getDistanceFromLatLonInKm(
+        {lat: this.currentLatitude, lng: this.currentLongitude},
+        {lat: event.coords.latitude, lng: event.coords.longitude}
+      ).subscribe( distance => {
+          if(distance >= 2500){
+            console.log("DISTANCE IN_VEHICLE: ", distance);
+            this.getGeolocation().subscribe( geolocation => {
+              console.log("GEOLOCATION 2500: ", geolocation);
+              this.currentLatitude = geolocation.coords.latitude;
+              this.currentLongitude = geolocation.coords.longitude;
+              this.connectivity.Get(environment.serverPath + 'todo_list/to_use/' + JSON.parse(localStorage.getItem('currentUser')).id, this.headersOptions).then(response => {
+                // console.log("TO_USE: ", response);
+                this.list = response;
+                this.list.forEach(item => {
+                  this.newArray += item.kind;
+                });
+                // console.log("NEW ARRAY:", this.newArray);
+                if (this.newArray.length > 0) {
+                  this.newArray = this.newArray.split(/(\s+)/).filter(function (e) {
+                    return e.trim().length > 0;
+                  });
+                  this.newArray = new Set(this.newArray);
+                  setTimeout(() => {
+                    this.newArray.forEach(item => {
+                      let googelPath = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${geolocation.coords.latitude},${geolocation.coords.longitude}&radius=150&type=${item}&keyword=${item}&key=AIzaSyBbjVONh2KXV3hWmIV3JkOzb70f6XlmI_k`;
+                      let param = new HttpParams().set('teste', googelPath);
+                      // console.log("PATH ****: ", googelPath);
+                      this.connectivity.getGoolge(environment.serverPath + 'users/google_request', param)
+                        .then(response => {
+                          if (response.results.length > 0) {
+                            response.results.forEach(local => {
+                              if (local.hasOwnProperty('rating')) {
+                                this.notify.notification(JSON.parse(localStorage.getItem('currentUser')).username + "encontramos algo próximo a você");
+                                return;
+                              }
+                            })
+                          }
+                        })
+                        .catch(err => console.log("error: ", err));
+                    });
+                  });
+                }
+              });
+            }, error => console.log("error:", error) );
+          }
+        },
+        err => console.log("error:", err));
+    }
   }
 
   // //pega a ssaida do usuario em um perimetro definido
@@ -189,9 +294,6 @@ export class BackgroundGeolocationProvider {
     let geolocation: any;
     console.log('[geofence] -', event.action, event.identifier, event.location);
     // this.notify.notification('GEOFENCE ');
-    if(event.action == "EXIT"){
-      this.notify.notification('EXIT');
-    }
     if(event.action == 'EXIT'){
       this.getGeolocation().subscribe( response => {
         console.log("GEOLOCATION RESP: ", response);
@@ -266,4 +368,32 @@ export class BackgroundGeolocationProvider {
   stop(){
     BackgroundGeolocation.stop()
   }
+
+
+  getDistanceFromLatLonInKm(position1, position2):Observable<any> {
+    return new Observable( observer => {
+      var deg2rad = function (deg) { return deg * (Math.PI / 180); },
+        R = 6371,
+        dLat = deg2rad(position2.lat - position1.lat),
+        dLng = deg2rad(position2.lng - position1.lng),
+        a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+          + Math.cos(deg2rad(position1.lat))
+          * Math.cos(deg2rad(position1.lat))
+          * Math.sin(dLng / 2) * Math.sin(dLng / 2),
+        c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      observer.next( ((R * c *1000).toFixed()) );
+    })
+  }
+
+  /* this.latitude = 0; this.longitude = 0;
+    if currentPosition >= 500
+      this.latitude = novo; this.longitude = novo;
+
+  */
+  // this.getDistanceFromLatLonInKm(
+  //   {lat: -23.522490, lng: -46.736600},
+  //   {lat: -23.4446654, lng: -46.5319316}
+  // ));
+
+  // console.log(distancia);
 }
